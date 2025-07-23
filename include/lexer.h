@@ -1,19 +1,10 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-const char* keywords[] = {
-    "auto", "break", "case", "char", "const", "continue", "default", "do",
-    "double", "else", "enum", "extern", "float", "for", "goto", "if",
-    "inline", "int", "long", "register", "restrict", "return", "short",
-    "signed", "sizeof", "static", "struct", "switch", "typedef", "union",
-    "unsigned", "void", "volatile", "while", "_Bool", "_Complex", "_Imaginary"
-};
-
-const int num_keywords = sizeof(keywords) / sizeof(keywords[0]);
-
+#include <stdio.h>
 
 typedef enum {
-    EOF,
+    EOF_TOKEN,
     IDENTIFIER,
     NUMBER,
     STRING,
@@ -25,6 +16,14 @@ typedef enum {
     WHITESPACE,
     UNKNOWN
 } TokenType;
+typedef struct {
+    TokenType type;
+    char lexeme[256];  //holds the actual token text (e.g., "int", "main")
+    int line;          //line number for debugging
+} Token;
+extern const char* keywords[];
+extern const int num_keywords;
 
-
+Token get_next_token(FILE* file);                     
+const char* token_type_to_string(TokenType type);  //SAME AS IN .C?
 #endif//LEXER_H
