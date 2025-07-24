@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include "../include/lexer.h"
 
-int main(int argc,char* argv[]) {
+int 
+main(int argc,char* argv[]) {
 	FILE *filed = fopen("test/test.c","r");
 	if (filed == NULL) {
 		printf( "couldnt open file \n");

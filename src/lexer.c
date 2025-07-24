@@ -10,7 +10,8 @@ const char* keywords[] = {
 
 const int num_keywords = sizeof(keywords) / sizeof(keywords[0]);
 
-Token get_next_token(FILE* file) {
+Token 
+get_next_token(FILE* file) {
     Token t;
     t.type = EOF_TOKEN;
     snprintf(t.lexeme, sizeof(t.lexeme), "EOF");
@@ -18,7 +19,8 @@ Token get_next_token(FILE* file) {
     return t;
 }
 
-const char* token_type_to_string(TokenType type) {
+const char* 
+token_type_to_string(TokenType type) {
     switch (type) {
         case EOF_TOKEN: return "EOF";
         case IDENTIFIER: return "IDENTIFIER";

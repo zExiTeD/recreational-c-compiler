@@ -16,11 +16,13 @@ typedef enum {
     WHITESPACE,
     UNKNOWN
 } TokenType;
+
 typedef struct {
     TokenType type;
     char lexeme[256];  //holds the actual token text (e.g., "int", "main")
     int line;          //line number for debugging
 } Token;
+
 extern const char* keywords[];
 extern const int num_keywords;
 
