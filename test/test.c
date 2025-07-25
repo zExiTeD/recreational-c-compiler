@@ -1,7 +1,10 @@
-#include <stdio.h>
-
 int 
-main(int argc , char *argv[]) {
+main() {
 	int a = 0;
-	return a;
+	int b;
+	if ( a < 1 ) {
+		b = 12;
+	}
+
+	return b;
 }

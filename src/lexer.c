@@ -1,5 +1,9 @@
 #include "../include/lexer.h"
 #include <string.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <ctype.h>
+
 const char* keywords[] = {
     "auto", "break", "case", "char", "const", "continue", "default", "do",
     "double", "else", "enum", "extern", "float", "for", "goto", "if",
@@ -10,13 +14,45 @@ const char* keywords[] = {
 
 const int num_keywords = sizeof(keywords) / sizeof(keywords[0]);
 
-Token 
-get_next_token(FILE* file) {
-    Token t;
-    t.type = EOF_TOKEN;
-    snprintf(t.lexeme, sizeof(t.lexeme), "EOF");
-    t.line = 1;
-    return t;
+Lexer Lexer_Init(FILE* file_d) {
+	Lexer lexer;
+
+	fseek(file_d, 0, SEEK_END);
+	uint32_t file_size = ftell(file_d);
+	printf("size of file := %d \n", file_size);
+	
+	fseek(file_d, 0, SEEK_SET);
+	
+	lexer.input = (char *)malloc(file_size +1);
+	if (!lexer.input) {
+		exit(-1);
+	}
+
+	fread(lexer.input , 1  ,file_size,file_d);
+	lexer.input[file_size] = '\0';
+	fclose(file_d);
+
+	printf("data :\n %s",lexer.input);
+
+	return lexer;
+}
+
+void Lexer_Tokenize(Lexer *lexer){
+	uint32_t index = 0;
+	char buffer[1024];
+	while( lexer->input[index] != '\0'){
+		if ( isalpha(lexer->input[index]) ) {
+			uint32_t len = index;
+			while(!isspace(lexer->input[len])){
+				len ++;
+			}
+			strncpy(buffer,lexer->input + index,(len - index));
+			buffer[len - index ] = '\0';
+			printf("IDENTIFIER: %s\n", buffer);
+			index =index + len;
+		}
+		index ++;
+	}
 }
 
 const char* 

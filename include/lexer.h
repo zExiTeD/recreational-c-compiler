@@ -19,13 +19,22 @@ typedef enum {
 
 typedef struct {
     TokenType type;
-    char lexeme[256];  //holds the actual token text (e.g., "int", "main")
-    int line;          //line number for debugging
+    char *data;
+    int line;
 } Token;
+
+typedef struct {
+	Token *tokens;
+	char 	*input;
+	int current_line;
+}Lexer;
 
 extern const char* keywords[];
 extern const int num_keywords;
 
+Lexer Lexer_Init(FILE* file);
+void	Lexer_Tokenize(Lexer *lexer);
+
 Token get_next_token(FILE* file);                     
-const char* token_type_to_string(TokenType type);  //SAME AS IN .C?
+const char* token_type_to_string(TokenType type);
 #endif//LEXER_H
