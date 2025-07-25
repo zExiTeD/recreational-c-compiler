@@ -10,11 +10,10 @@ main(int argc,char* argv[]) {
 		return -1;
 	}
 
-	Lexer lexer = Lexer_Init( file_d);
+	Lexer* lexer = Lexer_Init( file_d);
 
-	Lexer_Tokenize( &lexer);
+	Lexer_Tokenize( lexer);
 
-	free(lexer.input);
-
+	free(lexer);
 	return 0;
 }

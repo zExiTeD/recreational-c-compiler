@@ -14,8 +14,8 @@ const char* keywords[] = {
 
 const int num_keywords = sizeof(keywords) / sizeof(keywords[0]);
 
-Lexer Lexer_Init(FILE* file_d) {
-	Lexer lexer;
+Lexer* Lexer_Init(FILE* file_d) {
+	Lexer* lexer = (Lexer*) malloc(sizeof(Lexer));
 
 	fseek(file_d, 0, SEEK_END);
 	uint32_t file_size = ftell(file_d);
@@ -23,16 +23,23 @@ Lexer Lexer_Init(FILE* file_d) {
 	
 	fseek(file_d, 0, SEEK_SET);
 	
-	lexer.input = (char *)malloc(file_size +1);
-	if (!lexer.input) {
+	lexer->input = (char *)malloc(file_size +1);
+	if (!lexer->input) {
+		printf("error : Lexer_Init(); lexer.input\n");
 		exit(-1);
 	}
 
-	fread(lexer.input , 1  ,file_size,file_d);
-	lexer.input[file_size] = '\0';
+	fread(lexer->input , 1  ,file_size,file_d);
+	lexer->input[file_size] = '\0';
 	fclose(file_d);
 
-	printf("data :\n %s",lexer.input);
+	printf("data :\n%s",lexer->input);
+	
+	lexer->tokens = (Token *)malloc(1024 * sizeof(Token)); 
+	if (!lexer->tokens) {
+		printf("error : Lexer_Init(); lexer.tokens\n");
+		exit(-1);
+	}
 
 	return lexer;
 }
@@ -41,17 +48,41 @@ void Lexer_Tokenize(Lexer *lexer){
 	uint32_t index = 0;
 	char buffer[1024];
 	while( lexer->input[index] != '\0'){
-		if ( isalpha(lexer->input[index]) ) {
-			uint32_t len = index;
-			while(!isspace(lexer->input[len])){
-				len ++;
-			}
-			strncpy(buffer,lexer->input + index,(len - index));
-			buffer[len - index ] = '\0';
-			printf("IDENTIFIER: %s\n", buffer);
-			index =index + len;
+
+		if (isspace(lexer->input[index])) {
+			index++;
+			continue;
 		}
-		index ++;
+
+		if ( isalpha(lexer->input[index]) ) {
+			uint32_t len = 0;
+			while (lexer->input[index + len] != '\0' &&
+					!isspace(lexer->input[index + len]) &&
+					isalpha(lexer->input[index + len])) {
+				len++;
+			}
+
+			strncpy(buffer,lexer->input + index,len);
+			buffer[len ] = '\0';
+			index = index + len;
+			printf("IDENTIFIER: %s\n", buffer);
+		}
+
+		if (ispunct(lexer->input[index])) {
+			printf("SYMBOL: %c\n", lexer->input[index]);
+			index++;
+			continue;
+		}
+			
+		if (isdigit(lexer->input[index])) {
+			uint32_t len = 0;
+			while (isdigit(lexer->input[index + len])) len++;
+			strncpy(buffer, lexer->input + index, len);
+			buffer[len] = '\0';
+			printf("NUMBER: %s\n", buffer);
+			index += len;
+			continue;
+		}	
 	}
 }
 

@@ -27,12 +27,13 @@ typedef struct {
 	Token *tokens;
 	char 	*input;
 	int current_line;
+	int token_index;
 }Lexer;
 
 extern const char* keywords[];
 extern const int num_keywords;
 
-Lexer Lexer_Init(FILE* file);
+Lexer* Lexer_Init(FILE* file);
 void	Lexer_Tokenize(Lexer *lexer);
 
 Token get_next_token(FILE* file);                     
