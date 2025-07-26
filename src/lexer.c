@@ -1,8 +1,4 @@
 #include "../include/lexer.h"
-#include <string.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <ctype.h>
 
 const char* keywords[] = {
 	"auto", "break", "case", "char", "const", "continue", "default", "do",
@@ -69,8 +65,8 @@ Lexer_Tokenize(Lexer *lexer){
 			buffer[len ] = '\0';
 			index = index + len;
 
-			lexer->tokens[lexer->token_index].data = malloc(sizeof(char) * (len+1));
-			strcpy(lexer->tokens[lexer->token_index].data, buffer);
+			lexer->tokens[lexer->token_index].data.str = malloc(sizeof(char) * (len+1));
+			strcpy(lexer->tokens[lexer->token_index].data.str, buffer);
 
 			if(check_is_keyword(buffer)) {
 				lexer->tokens[lexer->token_index].type = KEYWORD;
@@ -108,34 +104,70 @@ Lexer_Tokenize(Lexer *lexer){
 						strncpy(buffer, lexer->input + index, len);
 						buffer[len] = '\0';
 
-						lexer->tokens[lexer->token_index].data = malloc(sizeof(char) * (len + 1));
-						if (!lexer->tokens[lexer->token_index].data) {
+						lexer->tokens[lexer->token_index].data.str = malloc(sizeof(char) * (len + 1));
+						if (!lexer->tokens[lexer->token_index].data.str) {
 							printf("Error: Memory allocation failed\n");
 							break;
 						}
-						strcpy(lexer->tokens[lexer->token_index].data, buffer);
+						strcpy(lexer->tokens[lexer->token_index].data.str, buffer);
 						lexer->tokens[lexer->token_index].type = STRING;
-						printf("STRING: %s\n", buffer);
-						lexer->token_index++;  						
+						lexer->token_index += 1;  						
 						index += len;
+
+						printf("STRING: %s\n", buffer);
 					}break;
 				default : 
 					{
-						printf("SYMBOL: %c\n", lexer->input[index]);
-					}break;
+						if (index + 1 < strlen(lexer->input) && ispunct(lexer->input[index + 1])) {
+							char two_char[3];
+							two_char[0] = lexer->input[index];
+							two_char[1] = lexer->input[index + 1];
+							two_char[2] = '\0';
+
+							lexer->tokens[lexer->token_index].data.ch[0] = lexer->input[index];
+							lexer->tokens[lexer->token_index].data.ch[1] = lexer->input[index + 1];
+							lexer->tokens[lexer->token_index].data.ch[2] = '\0';
+							lexer->tokens[lexer->token_index].type = OPERATOR;
+							lexer->token_index += 1;
+							index += 2; // Skip both characters
+
+							printf("OPERATOR: %s\n", two_char);
+						} else {
+							lexer->tokens[lexer->token_index].data.ch[0] = lexer->input[index];
+							lexer->tokens[lexer->token_index].data.ch[1] = '\0';
+							lexer->tokens[lexer->token_index].type = OPERATOR;
+							lexer->token_index += 1;
+							index += 1;
+
+							printf("OPERATOR: %c\n", lexer->input[index - 1]);
+
+						}break;
+					}
+					index++;
+					continue;
 			}
-			index++;
-			continue;
 		}
 
 		if (isdigit(lexer->input[index])) {
 			uint32_t len = 0;
 			while (isdigit(lexer->input[index + len])) len++;
+
 			strncpy(buffer, lexer->input + index, len);
 			buffer[len] = '\0';
+
+
+			lexer->tokens[lexer->token_index].data.str = malloc(sizeof(char) * (len + 1));
+			if (!lexer->tokens[lexer->token_index].data.str) {
+				printf("Error: Memory allocation failed\n");
+				break;
+			}
+			strcpy(lexer->tokens[lexer->token_index].data.str, buffer);
+
+			lexer->tokens[lexer->token_index].type = NUMBER;
+			lexer->token_index += 1;
+
 			printf("NUMBER: %s\n", buffer);
-			index += len;
-			continue;
+			index += len;;
 		}	
 	}
 }

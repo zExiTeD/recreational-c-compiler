@@ -1,10 +1,10 @@
 int 
 main() {
-	int a = 0;
+	int a = 69;
 	char c[] = "sigma boy";
 	int b;
-	if ( a < 1 ) {
-		b = 12;
+	if ( a <= 420 ) {
+		b = 69420;
 	}
 
 	return b;

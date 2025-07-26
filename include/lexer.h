@@ -1,7 +1,11 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include <string.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 
 typedef enum {
     EOF_TOKEN,
@@ -17,10 +21,16 @@ typedef enum {
 		UNKNOWN
 } TokenType;
 
+
+typedef union {
+    char *str;
+    char ch[3];
+} TokenData;
+
 typedef struct {
     TokenType type;
-    char *data;
-    int line;
+		TokenData data;
+		int line;
 } Token;
 
 typedef struct {
