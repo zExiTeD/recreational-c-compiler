@@ -12,9 +12,9 @@ typedef enum {
     KEYWORD,
     OPERATOR,
     PUNCTUATION,
-    COMMENT,
-    WHITESPACE,
-    UNKNOWN
+		COMMENT,
+		PP_DIRECTIVE,
+		UNKNOWN
 } TokenType;
 
 typedef struct {
@@ -26,7 +26,6 @@ typedef struct {
 typedef struct {
 	Token *tokens;
 	char 	*input;
-	int current_line;
 	int token_index;
 }Lexer;
 
@@ -34,7 +33,8 @@ extern const char* keywords[];
 extern const int num_keywords;
 
 Lexer* Lexer_Init(FILE* file);
-void	Lexer_Tokenize(Lexer *lexer);
+void	Lexer_Tokenize(Lexer* lexer);
+int	check_is_keyword(char data[]);
 
 Token get_next_token(FILE* file);                     
 const char* token_type_to_string(TokenType type);
